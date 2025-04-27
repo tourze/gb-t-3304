@@ -1,32 +1,37 @@
 # GB/T 3304
 
-[English](#english) | [中文](#中文)
+[![Latest Version](https://img.shields.io/packagist/v/tourze/gb-t-3304.svg?style=flat-square)](https://packagist.org/packages/tourze/gb-t-3304)
+[![Build Status](https://github.com/tourze/gb-t-3304/actions/workflows/ci.yml/badge.svg)](https://github.com/tourze/gb-t-3304/actions)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## English
+## Introduction
 
-### Introduction
+This package implements the GB/T 3304-1991 standard "Names of nationalities of China in romanization with codes" as a type-safe PHP 8.1+ enum. It provides both numeric (01-56) and two-letter (HA-JN) codes for all 56 officially recognized Chinese ethnic groups, with convenient integration interfaces for modern PHP applications.
 
-This package provides an implementation of the GB/T 3304-1991 standard "Names of nationalities of China in romanization with codes" as a PHP 8.1+ enum.
+## Features
 
-### Features
-
-- Complete implementation of all 56 ethnic groups in China
-- Provides both numeric codes (01-56) and two-letter codes (HA-JN)
+- Full coverage of all 56 Chinese nationalities
+- Provides numeric codes (01-56) and two-letter codes (HA-JN)
 - Implements `Labelable`, `Itemable`, and `Selectable` interfaces for easy integration
-- Type-safe enum implementation
+- Type-safe, robust enum implementation
+- Simple API for code, label, and mapping conversion
+- Well-tested with PHPUnit
 
-### Requirements
+## Installation
 
-- PHP 8.1 or higher
-- tourze/enum-extra package
+**Requirements:**
 
-### Installation
+- PHP >= 8.1
+- Composer
+- Dependency: `tourze/enum-extra ~0.0.5`
+
+**Install via Composer:**
 
 ```bash
 composer require tourze/gb-t-3304
 ```
 
-### Usage
+## Quick Start
 
 ```php
 use Tourze\GBT3304\Nationality;
@@ -38,50 +43,29 @@ $code = Nationality::Han->value; // "01"
 $label = Nationality::Han->getLabel(); // "汉族"
 
 // Get two-letter code
-$letterCode = Nationality::Han->toCode(); // "HA"
+$alphaCode = Nationality::Han->toCode(); // "HA"
 
-// Get all options for select
-$options = Nationality::getItems(); // Returns array of all nationalities
+// Get all enum items as array
+$options = Nationality::getItems(); // array of all nationalities
 ```
 
-## 中文
+## Documentation
 
-### 简介
+- [API Reference](https://github.com/tourze/gb-t-3304)
+- See source code and tests for advanced usage
+- All enums implement `Labelable`, `Itemable`, `Selectable` for flexible integration
 
-本包提供了 GB/T 3304-1991 标准《中国各民族名称的罗马字母拼写法和代码》的 PHP 8.1+ 枚举实现。
+## Contributing
 
-### 特性
+- Please submit issues or pull requests via GitHub
+- Follow PSR-12 coding style
+- Ensure all tests pass (`composer test`)
+- Add tests for new features
 
-- 完整实现了中国 56 个民族
-- 提供数字代码（01-56）和双字母代码（HA-JN）
-- 实现了 `Labelable`、`Itemable` 和 `Selectable` 接口，便于集成
-- 类型安全的枚举实现
+## License
 
-### 要求
+MIT License. See [LICENSE](LICENSE) for details.
 
-- PHP 8.1 或更高版本
-- tourze/enum-extra 包
+## Changelog
 
-### 安装
-
-```bash
-composer require tourze/gb-t-3304
-```
-
-### 使用示例
-
-```php
-use Tourze\GBT3304\Nationality;
-
-// 获取数字代码
-$code = Nationality::Han->value; // "01"
-
-// 获取中文名称
-$label = Nationality::Han->getLabel(); // "汉族"
-
-// 获取双字母代码
-$letterCode = Nationality::Han->toCode(); // "HA"
-
-// 获取所有选项（用于下拉选择等）
-$options = Nationality::getItems(); // 返回所有民族的数组
-```
+See [CHANGELOG.md](CHANGELOG.md) for release history and upgrade notes.
