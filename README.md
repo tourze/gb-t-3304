@@ -44,9 +44,6 @@ $label = Nationality::Han->getLabel(); // "汉族"
 
 // Get two-letter code
 $alphaCode = Nationality::Han->toCode(); // "HA"
-
-// Get all enum items as array
-$options = Nationality::getItems(); // array of all nationalities
 ```
 
 ## Documentation

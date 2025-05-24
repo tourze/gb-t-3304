@@ -44,9 +44,6 @@ $label = Nationality::Han->getLabel(); // "汉族"
 
 // 获取双字母代码
 $alphaCode = Nationality::Han->toCode(); // "HA"
-
-// 获取所有民族选项
-$options = Nationality::getItems(); // 返回全部民族数组
 ```
 
 ## 详细文档
