@@ -27,7 +27,7 @@ class NationalityHelperTest extends TestCase
     {
         $codes = NationalityTestHelper::getAllCodesOfType('numeric');
 
-        $this->assertIsArray($codes);
+        $this->assertNotEmpty($codes);
         $this->assertCount(56, $codes);
         $this->assertContains('01', $codes);
         $this->assertContains('56', $codes);
@@ -40,7 +40,7 @@ class NationalityHelperTest extends TestCase
     {
         $codes = NationalityTestHelper::getAllCodesOfType('alpha');
 
-        $this->assertIsArray($codes);
+        $this->assertNotEmpty($codes);
         $this->assertCount(56, $codes);
         $this->assertContains('HA', $codes);
         $this->assertContains('JN', $codes);
@@ -53,7 +53,7 @@ class NationalityHelperTest extends TestCase
     {
         $map = NationalityTestHelper::createCodeToLabelMap();
 
-        $this->assertIsArray($map);
+        $this->assertNotEmpty($map);
         $this->assertCount(56, $map);
         $this->assertArrayHasKey('01', $map);
         $this->assertSame('汉族', $map['01']);

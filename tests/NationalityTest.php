@@ -54,14 +54,14 @@ class NationalityTest extends TestCase
     {
         $array = Nationality::Han->toArray();
 
-        $this->assertIsArray($array);
+        $this->assertNotEmpty($array);
         $this->assertArrayHasKey('value', $array);
         $this->assertArrayHasKey('label', $array);
         $this->assertSame('01', $array['value']);
         $this->assertSame('汉族', $array['label']);
 
         $array = Nationality::Jino->toArray();
-        $this->assertIsArray($array);
+        $this->assertNotEmpty($array);
         $this->assertArrayHasKey('value', $array);
         $this->assertArrayHasKey('label', $array);
         $this->assertSame('56', $array['value']);
@@ -75,7 +75,7 @@ class NationalityTest extends TestCase
     {
         $item = Nationality::Han->toSelectItem();
 
-        $this->assertIsArray($item);
+        $this->assertNotEmpty($item);
         $this->assertArrayHasKey('value', $item);
         $this->assertArrayHasKey('label', $item);
         $this->assertArrayHasKey('text', $item);
@@ -93,12 +93,12 @@ class NationalityTest extends TestCase
     {
         $options = Nationality::genOptions();
 
-        $this->assertIsArray($options);
+        $this->assertNotEmpty($options);
         $this->assertCount(56, $options);
 
         // 检查第一个选项
         $firstOption = $options[0];
-        $this->assertIsArray($firstOption);
+        $this->assertNotEmpty($firstOption);
         $this->assertArrayHasKey('value', $firstOption);
         $this->assertArrayHasKey('label', $firstOption);
         $this->assertSame('01', $firstOption['value']);
@@ -106,7 +106,7 @@ class NationalityTest extends TestCase
 
         // 检查最后一个选项
         $lastOption = $options[55];
-        $this->assertIsArray($lastOption);
+        $this->assertNotEmpty($lastOption);
         $this->assertArrayHasKey('value', $lastOption);
         $this->assertArrayHasKey('label', $lastOption);
         $this->assertSame('56', $lastOption['value']);
@@ -216,7 +216,6 @@ class NationalityTest extends TestCase
         foreach (Nationality::cases() as $nationality) {
             $code = $nationality->toCode();
             $this->assertNotEmpty($code, sprintf('民族 %s 没有对应的双字母代码', $nationality->getLabel()));
-            $this->assertIsString($code);
             $this->assertSame(2, strlen($code), sprintf('民族 %s 的双字母代码长度不为2', $nationality->getLabel()));
         }
     }
@@ -243,7 +242,7 @@ class NationalityTest extends TestCase
 
         // 创建选择列表供前端使用
         $selectOptions = Nationality::genOptions();
-        $this->assertIsArray($selectOptions);
+        $this->assertNotEmpty($selectOptions);
         $this->assertArrayHasKey(0, $selectOptions);
         $this->assertArrayHasKey('value', $selectOptions[0]);
         $this->assertArrayHasKey('label', $selectOptions[0]);
