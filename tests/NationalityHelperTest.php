@@ -1,15 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\GBT3304\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\GBT3304\Nationality;
 use Tourze\GBT3304\Tests\Helpers\NationalityTestHelper;
 
 /**
  * 测试 NationalityTestHelper 辅助类
+ *
+ * @internal
  */
-class NationalityHelperTest extends TestCase
+#[CoversClass(NationalityTestHelper::class)]
+final class NationalityHelperTest extends TestCase
 {
     /**
      * 测试获取随机民族
@@ -69,8 +75,13 @@ class NationalityHelperTest extends TestCase
         $map = NationalityTestHelper::createCodeToLabelMap();
 
         foreach (Nationality::cases() as $nationality) {
-            $this->assertArrayHasKey($nationality->value, $map);
-            $this->assertSame($nationality->getLabel(), $map[$nationality->value]);
+            $key = $nationality->value;
+            $this->assertArrayHasKey($key, $map);
+
+            // 使用array_key_exists确保PHPStan理解数组访问的安全性
+            if (array_key_exists($key, $map)) {
+                $this->assertSame($nationality->getLabel(), $map[$key]);
+            }
         }
     }
 }

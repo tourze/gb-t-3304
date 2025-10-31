@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\GBT3304\Tests\Helpers;
 
 use Tourze\GBT3304\Nationality;
@@ -16,6 +18,7 @@ class NationalityTestHelper
     {
         $cases = Nationality::cases();
         $randomIndex = array_rand($cases);
+
         return $cases[$randomIndex];
     }
 
@@ -23,32 +26,37 @@ class NationalityTestHelper
      * 获取不同类型的民族代码
      *
      * @param string $type 代码类型：numeric(数字代码) 或 alpha(字母代码)
-     * @return array 指定类型的所有民族代码
+     *
+     * @return array<int|string> 指定类型的所有民族代码
      */
     public static function getAllCodesOfType(string $type = 'numeric'): array
     {
         $result = [];
         foreach (Nationality::cases() as $nationality) {
-            if ($type === 'numeric') {
+            if ('numeric' === $type) {
                 $result[] = $nationality->value;
-            } elseif ($type === 'alpha') {
+            } elseif ('alpha' === $type) {
                 $result[] = $nationality->toCode();
             }
         }
+
         return $result;
     }
 
     /**
      * 创建民族代码与名称的映射数组
      *
-     * @return array 代码=>名称的映射数组
+     * @return array<string, string> 代码=>名称的映射数组
      */
     public static function createCodeToLabelMap(): array
     {
-        $map = [];
+        $result = [];
+
         foreach (Nationality::cases() as $nationality) {
-            $map[$nationality->value] = $nationality->getLabel();
+            $result[$nationality->value] = $nationality->getLabel();
         }
-        return $map;
+
+        /** @var array<string, string> $result */
+        return $result;
     }
 }

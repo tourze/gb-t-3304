@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\GBT3304\Tests;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tourze\GBT3304\Nationality;
+use Tourze\PHPUnitEnum\AbstractEnumTestCase;
 
 /**
  * 民族代码实际应用场景测试
+ *
+ * @internal
  */
-class NationalityIntegrationTest extends TestCase
+#[CoversClass(Nationality::class)]
+final class NationalityIntegrationTest extends AbstractEnumTestCase
 {
     /**
      * 模拟表单提交和验证场景
@@ -19,7 +25,7 @@ class NationalityIntegrationTest extends TestCase
         $submittedCode = '04'; // 藏族
 
         // 验证提交的代码是否有效
-        $isValid = in_array($submittedCode, array_map(fn($case) => $case->value, Nationality::cases()), true);
+        $isValid = in_array($submittedCode, array_map(fn ($case) => $case->value, Nationality::cases()), true);
         $this->assertTrue($isValid, '提交的民族代码应该是有效的');
 
         // 转换为枚举实例
@@ -53,7 +59,7 @@ class NationalityIntegrationTest extends TestCase
                 'code' => $nationality->value,
                 'name' => $nationality->getLabel(),
                 'alpha_code' => $nationality->toCode(),
-            ]
+            ],
         ];
 
         // 验证响应格式
@@ -79,21 +85,21 @@ class NationalityIntegrationTest extends TestCase
         // 创建模拟翻译表 (实际应用中这会从语言文件或数据库加载)
         $translations = [
             'zh' => [
-                'Uygur' => '维吾尔族'
+                'Uygur' => '维吾尔族',
             ],
             'en' => [
-                'Uygur' => 'Uygur Nationality'
+                'Uygur' => 'Uygur Nationality',
             ],
         ];
 
         // 模拟中文环境下的展示
         $zhLanguage = 'zh';
-        $zhDisplay = $translations[$zhLanguage][str_replace('Tourze\\GBT3304\\Nationality::', '', $selectedNationality->name)] ?? $selectedNationality->getLabel();
+        $zhDisplay = $translations[$zhLanguage][str_replace('Tourze\GBT3304\Nationality::', '', $selectedNationality->name)] ?? $selectedNationality->getLabel();
         $this->assertSame('维吾尔族', $zhDisplay);
 
         // 模拟英文环境下的展示
         $enLanguage = 'en';
-        $enDisplay = $translations[$enLanguage][str_replace('Tourze\\GBT3304\\Nationality::', '', $selectedNationality->name)] ?? $selectedNationality->name;
+        $enDisplay = $translations[$enLanguage][str_replace('Tourze\GBT3304\Nationality::', '', $selectedNationality->name)] ?? $selectedNationality->name;
         $this->assertSame('Uygur Nationality', $enDisplay);
 
         // 标准代码在所有语言环境中保持一致
@@ -123,7 +129,7 @@ class NationalityIntegrationTest extends TestCase
             $nationalityCode = $row['nationality_code'];
             $nationality = Nationality::tryFrom($nationalityCode);
 
-            if ($nationality !== null) {
+            if (null !== $nationality) {
                 $processedRow['nationality_name'] = $nationality->getLabel();
                 $processedRow['nationality_valid'] = true;
             } else {
@@ -142,5 +148,49 @@ class NationalityIntegrationTest extends TestCase
         $this->assertSame('壮族', $processedData[1]['nationality_name']);
         $this->assertFalse($processedData[2]['nationality_valid']);
         $this->assertSame('未知', $processedData[2]['nationality_name']);
+    }
+
+    /**
+     * 测试 toArray 方法在集成场景中的应用
+     */
+    public function testToArray(): void
+    {
+        $nationality = Nationality::Han;
+        $array = $nationality->toArray();
+
+        $this->assertIsArray($array);
+        $this->assertArrayHasKey('value', $array);
+        $this->assertArrayHasKey('label', $array);
+        $this->assertSame('01', $array['value']);
+        $this->assertSame('汉族', $array['label']);
+
+        // 测试在数据序列化场景中的应用
+        $serializedData = json_encode($array);
+        $this->assertIsString($serializedData);
+        $deserializedData = json_decode($serializedData, true);
+        $this->assertSame($array, $deserializedData);
+    }
+
+    /**
+     * 测试 toCode 方法在集成场景中的应用
+     */
+    public function testToCode(): void
+    {
+        $nationality = Nationality::Mongol;
+        $code = $nationality->toCode();
+
+        $this->assertIsString($code);
+        $this->assertSame('MG', $code);
+        $this->assertSame(2, strlen($code));
+
+        // 测试在对外接口中的应用
+        $apiResponse = [
+            'id' => 123,
+            'nationality_code' => $nationality->value,
+            'nationality_alpha_code' => $code,
+        ];
+
+        $this->assertSame('02', $apiResponse['nationality_code']);
+        $this->assertSame('MG', $apiResponse['nationality_alpha_code']);
     }
 }

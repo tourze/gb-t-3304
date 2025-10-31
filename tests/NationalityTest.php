@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\GBT3304\Tests;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tourze\GBT3304\Nationality;
+use Tourze\PHPUnitEnum\AbstractEnumTestCase;
 
 /**
  * 测试 Nationality 枚举类
+ *
+ * @internal
  */
-class NationalityTest extends TestCase
+#[CoversClass(Nationality::class)]
+final class NationalityTest extends AbstractEnumTestCase
 {
     /**
      * 测试枚举值是否正确
@@ -66,24 +72,6 @@ class NationalityTest extends TestCase
         $this->assertArrayHasKey('label', $array);
         $this->assertSame('56', $array['value']);
         $this->assertSame('基诺族', $array['label']);
-    }
-
-    /**
-     * 测试 toSelectItem 功能 (来自 ItemTrait)
-     */
-    public function testToSelectItem(): void
-    {
-        $item = Nationality::Han->toSelectItem();
-
-        $this->assertNotEmpty($item);
-        $this->assertArrayHasKey('value', $item);
-        $this->assertArrayHasKey('label', $item);
-        $this->assertArrayHasKey('text', $item);
-        $this->assertArrayHasKey('name', $item);
-        $this->assertSame('01', $item['value']);
-        $this->assertSame('汉族', $item['label']);
-        $this->assertSame('汉族', $item['text']);
-        $this->assertSame('汉族', $item['name']);
     }
 
     /**
@@ -162,48 +150,77 @@ class NationalityTest extends TestCase
      */
     public function testGenOptionsWithEnvFilter(): void
     {
-        // 保存原始环境变量
-        $originalEnv = [];
-        if (isset($_ENV['enum-display:' . Nationality::class . '-01'])) {
-            $originalEnv['enum-display:' . Nationality::class . '-01'] = $_ENV['enum-display:' . Nationality::class . '-01'];
-        }
+        $originalEnv = $this->backupEnvVariable();
 
         try {
-            // 设置环境变量禁用汉族选项
             $_ENV['enum-display:' . Nationality::class . '-01'] = false;
-
             $options = Nationality::genOptions();
 
-            // 检查选项数量减少了1个
             $this->assertCount(55, $options);
-
-            // 确保汉族选项被过滤掉了
-            $found = false;
-            foreach ($options as $option) {
-                if ($option['value'] === '01') {
-                    $found = true;
-                    break;
-                }
-            }
-            $this->assertFalse($found, '汉族选项不应该出现在过滤后的选项列表中');
-
-            // 确保蒙古族选项仍然存在
-            $found = false;
-            foreach ($options as $option) {
-                if ($option['value'] === '02') {
-                    $found = true;
-                    break;
-                }
-            }
-            $this->assertTrue($found, '蒙古族选项应该出现在过滤后的选项列表中');
+            $this->assertOptionFiltered($options, '01', '汉族选项不应该出现在过滤后的选项列表中');
+            $this->assertOptionExists($options, '02', '蒙古族选项应该出现在过滤后的选项列表中');
         } finally {
-            // 恢复原始环境变量
-            if (isset($originalEnv['enum-display:' . Nationality::class . '-01'])) {
-                $_ENV['enum-display:' . Nationality::class . '-01'] = $originalEnv['enum-display:' . Nationality::class . '-01'];
-            } else {
-                unset($_ENV['enum-display:' . Nationality::class . '-01']);
+            $this->restoreEnvVariable($originalEnv);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function backupEnvVariable(): array
+    {
+        $originalEnv = [];
+        $envKey = 'enum-display:' . Nationality::class . '-01';
+        if (isset($_ENV[$envKey])) {
+            $originalEnv[$envKey] = $_ENV[$envKey];
+        }
+
+        return $originalEnv;
+    }
+
+    /**
+     * @param array<string, mixed> $originalEnv
+     */
+    private function restoreEnvVariable(array $originalEnv): void
+    {
+        $envKey = 'enum-display:' . Nationality::class . '-01';
+        if (isset($originalEnv[$envKey])) {
+            $_ENV[$envKey] = $originalEnv[$envKey];
+        } else {
+            unset($_ENV[$envKey]);
+        }
+    }
+
+    /**
+     * @param array<int, array<string, string>> $options
+     */
+    private function assertOptionFiltered(array $options, string $value, string $message): void
+    {
+        $found = $this->findOptionByValue($options, $value);
+        $this->assertFalse($found, $message);
+    }
+
+    /**
+     * @param array<int, array<string, string>> $options
+     */
+    private function assertOptionExists(array $options, string $value, string $message): void
+    {
+        $found = $this->findOptionByValue($options, $value);
+        $this->assertTrue($found, $message);
+    }
+
+    /**
+     * @param array<int, array<string, string>> $options
+     */
+    private function findOptionByValue(array $options, string $value): bool
+    {
+        foreach ($options as $option) {
+            if ($value === $option['value']) {
+                return true;
             }
         }
+
+        return false;
     }
 
     /**
