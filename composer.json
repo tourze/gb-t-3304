@@ -3,7 +3,7 @@
   "description": "PHP 8.1+ implementation of GB/T 3304-1991 standard - Chinese nationalities with numeric and alpha codes",
   "license": "MIT",
   "require": {
-    "tourze/enum-extra": "1.*"
+    "tourze/enum-extra": "1.0.*"
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",
