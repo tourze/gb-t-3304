@@ -19,6 +19,5 @@
     "psr-4": {
       "Tourze\\GBT3304\\Tests\\": "tests"
     }
-  },
-  "version": "1.0.0"
+  }
 }
